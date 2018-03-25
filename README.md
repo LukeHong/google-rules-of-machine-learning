@@ -107,53 +107,62 @@ set of discrete values, or combining it with other features) but start by using 
 consider pulling these pieces apart, and feeding these inputs into the learning separately. Some techniques that apply to ensembles apply here (see **Rule #40**).
 4. Modify the label. This is an option when you feel that the heuristic captures information not currently contained in the label. For example, if you are trying to maximize the number of downloads, but you also want quality content, then maybe the solution is to multiply the label by the average number of stars the app received. There is a lot of space here for leeway. See the section on [“Your First Objective”](#your-first-objective). Do be mindful of the added complexity when using heuristics in an ML system. Using old heuristics in your new machine learning algorithm can help to create a smooth transition, but think about whether there is a simpler way to accomplish the same effect.
 
-### Monitoring
+### 監控 (Monitoring)
 
-> In general, practice good alerting hygiene, such as making alerts actionable and having a
-dashboard page.
+> 一般來說，使一個警告通知包含可執行的動作及監控報表頁面，是不錯的實踐。
 
-#### Rule 8 - Know the freshness requirements of your system
+#### Rule 8 - 了解你的系統對時效性的需求
 
-How much does performance degrade if you have a model that is a day old? A week old? A quarter old? This information can help you to understand the priorities of your monitoring. If you
-lose 10% of your revenue if the model is not updated for a day, it makes sense to have an engineer watching it continuously. Most ad serving systems have new advertisements to handle
-every day, and must update daily. For instance, if the ML model for Google Play Search is not updated, it can have an impact on revenue in under a month. Some models for What’s Hot in
-Google Plus have no post identifier in their model so they can export these models infrequently. Other models that have post identifiers are updated much more frequently. Also notice that
-freshness can change over time, especially when feature columns are added or removed from your model.
+如果你有個一天前的模型，會降低多少的效能表現？一周前？一月前呢？這項資訊可以幫助你了解監控的優先度。
+如果這個模型一天不更新就會損失 10% 的營收，那麼讓一個工程師持續監控就是一件合理的事。
 
-#### Rule 9 - Detect problems before exporting models.
+大多數的廣告服務系統每天都有新的廣告要處理，因此必須每天更新。舉例來說，如果 Google Play 商店的搜尋功能沒更新，在一個月內就會衝擊到營收。
+某些 Google+ 熱門內容的模型並不包含貼文編號，因此可以偶爾再送出新模型，而某些包含貼文編號的模型就必須更經常的更新。
 
-Many machine learning systems have a stage where you export the model to serving. If there is an issue with an exported model, it is a user­facing issue. If there is an issue before, then it is a training issue, and users will not notice.
-Do sanity checks right before you export the model. Specifically, make sure that the model’s performance is reasonable on held out data. Or, if you have lingering concerns with the data, don’t export a model. Many teams continuously deploying models check the area under the [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) (or [AUC](http://stats.stackexchange.com/questions/132777/what-does-auc-stand-for-and-what-is-it)) before exporting. Issues about models that haven’t been exported
-require an e­mail alert, but issues on a user­facing model may require a page. So better to wait and be sure before impacting users.
+值得注意的是，時效性會隨著時間改變，特別是當特徵欄位被從模型中加入或移除時。
 
-#### Rule 10 - Watch for silent failures.
+#### Rule 9 - 在送出模型之前發現問題
 
-This is a problem that occurs more for machine learning systems than for other kinds of systems. Suppose that a particular table that is being joined is no longer being updated. The
-machine learning system will adjust, and behavior will continue to be reasonably good, decaying gradually. Sometimes tables are found that were months out of date, and a simple refresh
-improved performance more than any other launch that quarter! For example, the coverage of a feature may change due to implementation changes: for example a feature column could be
-populated in 90% of the examples, and suddenly drop to 60% of the examples. Play once had a table that was stale for 6 months, and refreshing the table alone gave a boost of 2% in install rate. If you track statistics of the data, as well as manually inspect the data on occasion, you can reduce these kinds of failures.*
+許多機器學習系統會有一個送出模型至服務的階段，如果送出的模型有問題，就會是一個影響到使用者的問題 (userfacing issue)。
+但如果發生在送出之前，就只是一個訓練上的問題 (training issue)，而不會影響到使用者。
+
+在部屬模型之前要做合理性確認 (sanity check)，特別是確保在給出的資料之下模型的表現是合理的。如果對於資料抱持懷疑，就不要部屬這個模型。
+許多的團隊在持續部屬模型之前，會檢查 [ROC 曲線](https://zh.wikipedia.org/wiki/ROC%E6%9B%B2%E7%BA%BF) 下方的面積 (或是 [AUC](http://stats.stackexchange.com/questions/132777/what-does-auc-stand-for-and-what-is-it))。
+
+還沒部屬出去的模型出問題時，只需要電子郵件的警告通知，但是影響到使用者的模型可能需要有監控頁面。因此在接觸使用者之前，最好等到確認完畢為止。
+
+#### Rule 10 - 小心沉默的錯誤 (silent failures)
+
+比起其他種類的系統，這是個更常發生於機器學習系統的問題。
+
+例如某個使用到的資料表已經停止更新了，機器學習系統會適應並且有合理的好表現，但是漸漸地崩壞。有時會發現一些資料表的資料已經過期了數個月，比許多其他嘗試，只要簡單的更新資料就能提升更多的效能表現。
+
+某個特徵的涵蓋度可能會因實作上的更動而改變，例如某個特徵欄位本來存在於 90% 的樣本中，但突然掉到剩 60% 的樣本中。Play 商店曾經有個過期了六個月的資料表，只更新這個資料表就提升了 2% 的安裝率。如果你追蹤資料的統計數據或是不時的手動查看資料，就可以減少這類型的錯誤。*
 
 * <sup> [*A Framework for Analysis of Data Freshness* - Bouzeghoub & Peralta](https://www.fing.edu.uy/inco/grupos/csi/esp/Publicaciones/2004/iqis2004-mb.pdf)</sup>
 
-#### Rule 11 - Give feature columns owners and documentation.
+#### Rule 11 - 把特徵欄位指定一個負責人以及建立文件 Give feature columns owners and documentation.
 
-If the system is large, and there are many feature columns, know who created or is maintaining each feature column. If you find that the person who understands a feature column is leaving, make sure that someone has the information. Although many feature columns have descriptive names, it's good to have a more detailed description of what the feature is, where it came from, and how it is expected to help.
+當系統龐大且有著許多特徵欄位時，需要知道每個欄位由誰建立或維護。當你發現某個了解一個特徵欄位的人要離開時，確保有人能交接資訊。
+縱然許多欄位有明確的名字，但如果有關於這特徵為何、從何而來及預期的效果為何的詳細敘述會更好。
 
-### Your First Objective
+### 你的第一個目標 (Objective)
 
-> You have many metrics, or measurements about the system that you care about, but your machine learning algorithm will often require a **single objective, a number that your algorithm is “trying” to optimize.** I distinguish here between objectives and metrics: **a metric is any number that your system reports**, which may or may not be important. See also Rule **#2**.
+> 對於你在意的系統，有著許多的指標 (metrics) 與測量 (measurements)，但是你的機器學習演算法通常需要一個 **單一的目標，一個你的演算法「嘗試」去最佳化的的數字**。我在此區分指標跟目標的不同：**指標是任何你系統反應出來的數字**，可能重要也可能不重要。可以參閱規則 **#2**
 
-#### Rule 12 - Don't overthink which objective you choose to directly optimize.
+#### Rule 12 - 不要過度考慮你要最佳化哪個目標
 
-You want to make money, make your users happy, and make the world a better place. There are tons of metrics that you care about, and you should measure them all (see Rule **#2**). However,
-early in the machine learning process, you will notice them all going up, even those that you do not directly optimize. For instance, suppose you care about number of clicks, time spent on the site, and daily active users. If you optimize for number of clicks, you are likely to see the time
-spent increase. So, keep it simple and don’t think too hard about balancing different metrics when you can still
-easily increase all the metrics. Don’t take this rule too far though: do not confuse your objective with the ultimate health of the system (see Rule #39). And, **if you find yourself increasing the directly optimized metric, but deciding not to launch, some objective revision may be required.**
+你想要賺錢、讓使用者開心、讓世界變得更美好。有著大量的指標可以去注意，而且你應該去測量所有的指標（見規則 **#2**）。
+但是在機器學習過程的早期，你會發現所有都提升了，就算不是你想要最佳化的。
 
-#### Rule 13 - Choose a simple, observable and attributable metric for your first objective.
+例如你關心著點擊數、在網站上的停留時間以及每日活躍用戶，當你提升點擊數時，你很有可能會發現停留時間也增加了。
+所以當你還能輕易的提升所有指標時，別太過於思考如何平衡各項指標。但也別太過頭：不要用系統的 ultimate health 混淆了你的目標（見規則 #39），以及 **如果你發現你提升了想要最佳化的指標，但決定不要不要發佈，那可能需要重新檢視目標**。
 
-Often you don't know what the true objective is. You think you do but then you as you stare at the data and side­-by-side analysis of your old system and new ML system, you realize you want to tweak it. Further, different team members often can't agree on the true objective. The ML objective should be something that is easy to measure and is a proxy for the “true”
-objective . So train on the simple ML objective, and consider having a "policy layer" on top that allows you to add additional logic (hopefully very simple logic) to do the final ranking.
+#### Rule 13 - 為你的第一個目標選擇一個簡單、可觀察及可歸因的指標 Choose a simple, observable and attributable metric for your first objective.
+
+常常你以為你知道什麼是真正的目標，直到你盯著你的舊系統與新機器學習系統的比較數據及分析時，你才發現到你想修正一下。進一步來說，團隊成員間經常無法在真正的目標上達成共識。機器學習的目標應該是可以簡單測量的「真正」目標的替代品。
+
+So train on the simple ML objective, and consider having a "policy layer" on top that allows you to add additional logic (hopefully very simple logic) to do the final ranking.
 
 The easiest thing to model is a user behavior that is directly observed and attributable to an
 action of the system:
