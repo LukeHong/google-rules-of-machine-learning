@@ -190,9 +190,9 @@ Finally, don’t try to get the machine learning to figure out:
 
 These are all important, but also incredibly hard. Instead, use proxies: if the user is happy, they will stay on the site longer. If the user is satisfied, they will visit again tomorrow. Insofar as well­being and company health is concerned, human judgement is required to connect any machine learned objective to the nature of the product you are selling and your business plan, so we don’t end up [here](https://www.youtube.com/watch?v=bq2_wSsDwkQ).
 
-#### Rule 14 - Starting with an interpretable model makes debugging easier.
+#### Rule 14 - 從一個可解釋（interpretable）的模型讓偵錯更容易 Starting with an interpretable model makes debugging easier.
 
-[Linear regression](https://en.wikipedia.org/wiki/Linear_regression), [logistic regression](https://en.wikipedia.org/wiki/Logistic_regression), and [Poisson regression](https://en.wikipedia.org/wiki/Poisson_regression) are directly motivated by a probabilistic model. Each prediction is interpretable as a probability or an expected value. This makes them easier to debug than models that use objectives (zero­one loss, various hinge losses, et cetera) that try to directly optimize classification accuracy or ranking performance. For example, if probabilities in training deviate from probabilities predicted in side­-by-­sides or by
+[線性回歸](https://en.wikipedia.org/wiki/Linear_regression), [邏輯回歸](https://en.wikipedia.org/wiki/Logistic_regression), and [帕松回歸](https://en.wikipedia.org/wiki/Poisson_regression) are directly motivated by a probabilistic model. Each prediction is interpretable as a probability or an expected value. This makes them easier to debug than models that use objectives (zero­one loss, various hinge losses, et cetera) that try to directly optimize classification accuracy or ranking performance. For example, if probabilities in training deviate from probabilities predicted in side­-by-­sides or by
 inspecting the production system, this deviation could reveal a problem.
 
 For example, in linear, logistic, or Poisson regression, **there are subsets of the data where the average predicted expectation equals the average label (1­moment calibrated, or just calibrated)<sup>3</sup>**. If you have a feature which is either 1 or 0 for each example, then the set of examples where that feature is 1 is calibrated. Also, if you have a feature that is 1 for every example, then the set of all examples is calibrated.
@@ -210,20 +210,24 @@ classifier.
 
 <sup>[Google Research Blog - Lessons learned while protecting Gmail](https://research.googleblog.com/2016/03/lessons-learned-while-protecting-gmail.html?m=1)</sup>
 
-## Feature engineering
+## 特徵工程 Feature engineering
 
-> In the first phase of the lifecycle of a machine learning system, the important issue is to get the training data into the learning system, get any metrics of interest instrumented, and create a serving infrastructure. **After you have a working end to end system with unit and system tests instrumented, Phase II begins.**
+> 在機器學習系統生命週期的第一階段中，重要的工作是將訓練資料送到系統中、選擇有興趣的目標、以及建立一個服務的架構。 **當你有個包含單元測試與系統測試的運作中 end to end 系統，第二階段就開始了**
 
-#### Rule 16 - Plan to launch and iterate.
+#### Rule 16 - 有計劃的發佈與迭代 Plan to launch and iterate.
 
-Don’t expect that the model you are working on now will be the last one that you will launch, or even that you will ever stop launching models. Thus consider whether the complexity you are
-adding with this launch will slow down future launches. Many teams have launched a model per quarter or more for years. There are three basic reasons to launch new models:
+不要假設目前正在做的模型會是最終發佈的，或甚至不會再發佈新的模型。Thus consider whether the complexity you are
+adding with this launch will slow down future launches.
 
-1. you are coming up with new features,
-2. you are tuning regularization and combining old features in new ways, and/or
-3. you are tuning the objective.
+許多團隊每季或是更長的時間才上線新的模型，有三個基本的原因去發佈新的模型：
 
-Regardless, giving a model a bit of love can be good: looking over the data feeding into the example can help find new signals as well as old, broken ones. So, as you build your model, think about how easy it is to add or remove or recombine features. Think about how easy it is to create a fresh copy of the pipeline and verify its correctness. Think about whether it is possible to have two or three copies running in parallel. Finally, don’t worry about whether feature 16 of 35 makes it into this version of the pipeline. You’ll get it next quarter.
+1. 你有增加新的特徵
+2. 你調整了正規化（regularization）以及用新方法組合舊的特徵
+3. 以及／或是你調整了目標
+
+不管如何，對一個模型投注更多心力會更好。looking over the data feeding into the example can help find new signals as well as old, broken ones.
+所以當你建立模型時，要考慮新增、移除或重組特徵的難易度，考慮新建立一份複製的流程以及驗證正確性的難度，考慮擁有兩三個複製的流程平行運作的可能性。
+Finally, don’t worry about whether feature 16 of 35 makes it into this version of the pipeline. You’ll get it next quarter.
 
 #### Rule 17 - Start with directly observed and reported features as opposed to learned features.
 
@@ -242,11 +246,12 @@ Often a machine learning system is a small part of a much bigger picture. For ex
 comment on a post before it is ever shown in What’s Hot. If you provide those statistics to the learner, it can promote new posts that it has no data for in the context it is optimizing. YouTube Watch Next could use number of watches, or co­-watches (counts of how many times one video was watched after another was watched) from YouTube search. You can also use explicit user
 ratings. Finally, if you have a user action that you are using as a label, seeing that action on the document in a different context can be a great feature. All of these features allow you to bring new content into the context. Note that this is not about personalization: figure out if someone likes the content in this context first, then figure out who likes it more or less.
 
-#### Rule 19 - Use very specific features when you can.
+#### Rule 19 - 盡可能使用非常具體的特徵 Use very specific features when you can.
 
-With tons of data, it is simpler to learn millions of simple features than a few complex features. Identifiers of documents being retrieved and canonicalized queries do not provide much
-generalization, but align your ranking with your labels on head queries.. Thus, don’t be afraid of groups of features where each feature applies to a very small fraction of your data, but overall coverage is above 90%. You can use regularization to eliminate the features that apply to too
-few examples.
+在擁有大量資料的狀況下，使用無數簡單特徵訓練會比使用一點點複雜的特徵訓練更簡單。
+Identifiers of documents being retrieved and canonicalized queries do not provide much
+generalization, but align your ranking with your labels on head queries.
+因此不要怕使用一組每個都只對應到少數樣本，但整體涵蓋超過九成資料的特徵，你可以用正規化來排除對應到過少樣本的特徵。
 
 #### Rule 20 - Combine and modify existing features to create new features in human-understandable ways.
 
@@ -273,16 +278,18 @@ but with regularization you will have fewer. Ten million examples, maybe a hundr
 Statistical learning theory rarely gives tight bounds, but gives great guidance for a starting point.
 In the end, use Rule **#28** to decide what features to use.
 
-#### Rule 22 - Clean up features you are no longer using.
+#### Rule 22 - 清除不再使用的特徵 Clean up features you are no longer using.
 
-Unused features create technical debt. If you find that you are not using a feature, and that combining it with other features is not working, then drop it out of your infrastructure. You want to keep your infrastructure clean so that the most promising features can be tried as fast as
-possible. If necessary, someone can always add back your feature. Keep coverage in mind when considering what features to add or keep. How many examples are covered by the feature? For example, if you have some personalization features, but only
-8% of your users have any personalization features, it is not going to be very effective. At the same time, some features may punch above their weight. For example, if you have a
-feature which covers only 1% of the data, but 90% of the examples that have the feature are positive, then it will be a great feature to add.
+不再使用的會造成技術債。當你發現你不再使用一個特徵，以及拿它與其他特徵組合也沒有用時，那就把它從架構中丟棄。
+你想要保持架構的乾淨，如此一來最有用的特徵嘗試起來可以越快，必要時也有人可以把它加回架構中。
+
+當要新增或保留一些特徵時，要記住它的涵蓋率。
+這個特徵涵蓋了多少樣本？例如當你有一些個人化的特徵，但只涵蓋了 8% 的使用者，這就不是高效率的特徵。
+同時有些特徵可能超乎預期的價值。例如有個特徵只涵蓋了 1% 的資料，但其中的 90% 都是有效的樣本，這就會是個適合增加的特徵。
 
 ### Human Analysis of the System
 
-> Before going on to the third phase of machine learning, it is important to focus on something that is not taught in any machine learning class: how to look at an existing model, and improve it. This is more of an art than a science, and yet there are several anti-­patterns that it helps to avoid.
+> 在進入機器學習的第三階段之前，需要專注在一個任何機器學習課程不會教的事：「如何觀察一個既有的模型並且改善它」。比起科學這更像是門藝術，但有些反面模式應該避免。
 
 #### Rule 23 - You are not a typical end user.*
 
