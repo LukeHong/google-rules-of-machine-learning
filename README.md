@@ -216,10 +216,10 @@ classifier.
 
 #### Rule 16 - 有計劃的發佈與迭代 Plan to launch and iterate.
 
-不要假設目前正在做的模型會是最終發佈的，或甚至不會再發佈新的模型。Thus consider whether the complexity you are
-adding with this launch will slow down future launches.
+不要假設目前正在做的模型會是最終發佈的，或甚至不會再發佈新的模型。
+因此要考慮這次增加的複雜度是否會拖慢之後新模型的發佈。
 
-許多團隊每季或是更長的時間才上線新的模型，有三個基本的原因去發佈新的模型：
+許多團隊每季或是更長的時間才發佈新的模型，有三個基本的原因去發佈新的模型：
 
 1. 你有增加新的特徵
 2. 你調整了正規化（regularization）以及用新方法組合舊的特徵
@@ -232,7 +232,8 @@ Finally, don’t worry about whether feature 16 of 35 makes it into this version
 #### Rule 17 - 從可直接觀察、被呈現的特徵而不是 "learned features" Start with directly observed and reported features as opposed to learned features.
 
 這可能是一個有爭議的點，但它避免了不少陷阱。
-首先來解釋一下什麼是 "learned features"？"learned features" 是一個由外部系統（例如一個非監督式的分群系統）或是該機器學習系統本身（例如透過分解模型或是深度學習）產生的特徵。
+首先來解釋一下什麼是 "learned features"？
+"learned features" 是一個由外部系統（例如一個非監督式的分群系統）或是該機器學習系統本身（例如透過分解模型或是深度學習）產生的特徵。
 這兩個都可能很有用，但是又有著許多的問題，因此不應該被用在剛開始的模型中。
 
 如果你使用外部系統來產生一個特徵，要記得這個系統有他自己的目標，而跟你當前的目標可能只有微弱的關聯。
@@ -296,9 +297,9 @@ In the end, use Rule **#28** to decide what features to use.
 這個特徵涵蓋了多少樣本？例如當你有一些個人化的特徵，但只涵蓋了 8% 的使用者，這就不是高效率的特徵。
 同時有些特徵可能超乎預期的價值。例如有個特徵只涵蓋了 1% 的資料，但其中的 90% 都是有效的樣本，這就會是個適合增加的特徵。
 
-### Human Analysis of the System
+### 系統的人為分析 Human Analysis of the System
 
-> 在進入機器學習的第三階段之前，需要專注在一個任何機器學習課程不會教的事：「如何觀察一個既有的模型並且改善它」。比起科學這更像是門藝術，但有些反面模式應該避免。
+> 在進入機器學習的第三階段之前，需要專注在一個任何機器學習課程都不會教的事：「如何觀察一個既有的模型並且改善它」。比起科學這更像是門藝術，但有些反面模式應該避免。
 
 #### Rule 23 - You are not a typical end user.*
 
@@ -309,17 +310,24 @@ do usability testing (one description is in Steve Krug’s [*Don’t Make Me Thi
 
 <sup>[Google Research Blog - How to measure translation quality in your user interfaces](https://research.googleblog.com/2015/10/how-to-measure-translation-quality-in.html?m=1)
 
-#### Rule 24 - Measure the delta between models
+#### Rule 24 - 測量模型間的差異 Measure the delta between models
 
-One of the easiest, and sometimes most useful measurements you can make before any users have looked at your new model is to calculate just how different the new results are from production. For instance, if you have a ranking problem, run both models on a sample of queries through the entire system, and look at the size of the symmetric difference of the results
-(weighted by ranking position). If the difference is very small, then you can tell without running an experiment that there will be little change. If the difference is very large, then you want to make sure that the change is good. Looking over queries where the symmetric difference is high
-can help you to understand qualitatively what the change was like. Make sure, however, that the system is stable. Make sure that a model when compared with itself has a low (ideally zero)
-symmetric difference.
+在任何使用者看到你的新模型之前，其中一個最簡單以及有時候最有效的測量方法，就是計算新的結果與 production 上的差了多少。
+舉例來說，如果你有個排名問題（ranking problem），同時使用兩個模型來跑來自整個系統中的一筆樣本，看兩個結果的對稱差（symmetric difference）有多少（按照排名加權）。
+如果差異非常小，你不需要進行實驗就能說這只會有微小變動。
+如果差異非常巨大，則你就需要去確認是良性變動。
+檢查對稱差很高的部分，可以幫助你有效的了解變動的是什麼。
+然而需要確定這系統是穩定的，確保一個模型跟自己比較起來只有很低的對稱差（理想上是零）。
 
-#### Rule 25 - When choosing models, utilitarian performance trumps predictive power.
+#### Rule 25 - 當選擇模型時，實際的表現更勝於預測 When choosing models, utilitarian performance trumps predictive power.
 
-Your model may try to predict click­-through-­rate. However, in the end, the key question is what you do with that prediction. If you are using it to rank documents, then the quality of the final ranking matters more than the prediction itself. If you predict the probability that a document is spam and then have a cutoff on what is blocked, then the precision of what is allowed through matters more. Most of the time, these two things should be in agreement: when they do not
-agree, it will likely be on a small gain. Thus, if there is some change that improves log loss but degrades the performance of the system, look for another feature. When this starts happening more often, it is time to revisit the objective of your model.
+你的模型可能嘗試要預測點擊率（click­-through-­rate），然而最後的關鍵問題是你用這預測來做什麼。
+如果你用它來排名文件，則最後排名的品質比預測本身重要。
+如果你要預測這文件是垃圾訊息的機率然後阻擋下來，則最後通過的準確率更重要。
+
+大多數時候這兩個東西應該是一致同意的，如果不是的話通常只會有微小收穫。
+因此如果有些變動改善了 loss 但是降低了系統的表現，那就去檢查其他特徵。
+當這開始越來越常發生時，就是重新考慮這模型目標的時候了。
 
 #### Rule 26 - Look for patterns in the measured errors, and create new features.
 
