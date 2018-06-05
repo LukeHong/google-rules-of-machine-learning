@@ -229,24 +229,33 @@ adding with this launch will slow down future launches.
 所以當你建立模型時，要考慮新增、移除或重組特徵的難易度，考慮新建立一份複製的流程以及驗證正確性的難度，考慮擁有兩三個複製的流程平行運作的可能性。
 Finally, don’t worry about whether feature 16 of 35 makes it into this version of the pipeline. You’ll get it next quarter.
 
-#### Rule 17 - Start with directly observed and reported features as opposed to learned features.
+#### Rule 17 - 從可直接觀察、被呈現的特徵而不是 "learned features" Start with directly observed and reported features as opposed to learned features.
 
-This might be a controversial point, but it avoids a lot of pitfalls. First of all, let’s describe what a
-learned feature is. A learned feature is a feature generated either by an external system (such as an unsupervised clustering system) or by the learner itself (e.g. via a factored model or deep learning). Both of these can be useful, but they can have a lot of issues, so they should not be in
-the first model. If you use an external system to create a feature, remember that the system has its own
-objective. The external system's objective may be only weakly correlated with your current objective. If you grab a snapshot of the external system, then it can become out of date. If you
-update the features from the external system, then the meanings may change. If you use an external system to provide a feature, be aware that they require a great deal of care.
-The primary issue with factored models and deep models is that they are non­-convex. Thus, there is no guarantee that an optimal solution can be approximated or found, and the local
-minima found on each iteration can be different. This variation makes it hard to judge whether the impact of a change to your system is meaningful or random. By creating a model without
-deep features, you can get an excellent baseline performance. After this baseline is achieved, you can try more esoteric approaches.
+這可能是一個有爭議的點，但它避免了不少陷阱。
+首先來解釋一下什麼是 "learned features"？"learned features" 是一個由外部系統（例如一個非監督式的分群系統）或是該機器學習系統本身（例如透過分解模型或是深度學習）產生的特徵。
+這兩個都可能很有用，但是又有著許多的問題，因此不應該被用在剛開始的模型中。
+
+如果你使用外部系統來產生一個特徵，要記得這個系統有他自己的目標，而跟你當前的目標可能只有微弱的關聯。
+如果你使用了這個外部系統的快照（snapshot），則可能會變得過時。
+當你更新了來自這外部系統的特徵時，它的意義可能會改變。
+如果你使用一個外部系統來提供特徵，要知道這會需要大量額外的關注。
+
+分解模型或深度模型的主要問題在於它們是 non­-convex，因此無法保證可以找到近似或是最佳解決方案，以及每次迭代找到的區域最佳解可能都不一樣。
+這變化使其很難判斷一個改動造成的影響是有意義的，又或者只是隨機的。
+藉由建立一個不使用深度特徵（deep features）的模型，可以得到極好的基礎效能表現。
+達成了這個基礎以後，就可以嘗試更加深奧的方法。
 
 #### Rule 18 - Explore with features of content that generalize across contexts.
 
-Often a machine learning system is a small part of a much bigger picture. For example, if you imagine a post that might be used in What’s Hot, many people will plus­-one, re-­share, or
-comment on a post before it is ever shown in What’s Hot. If you provide those statistics to the learner, it can promote new posts that it has no data for in the context it is optimizing. YouTube Watch Next could use number of watches, or co­-watches (counts of how many times one video was watched after another was watched) from YouTube search. You can also use explicit user
-ratings. Finally, if you have a user action that you are using as a label, seeing that action on the document in a different context can be a great feature. All of these features allow you to bring new content into the context. Note that this is not about personalization: figure out if someone likes the content in this context first, then figure out who likes it more or less.
+機器學習系統常常只是更廣闊大局中的一小部分。
+例如如果你想像一篇貼文可能被用在「熱門文章」中，許多人會在其顯示為「熱門文章」之前就按讚、分享或是在底下發表回應。
+如果你把這些統計數據送去學習，它可以在其試著最佳化的情境中，推廣一篇沒有相關資料的新貼文。
+例如 Youtube 的「即將播放」可以使用從搜尋來的觀看數或是接著觀看數（看完一個影片後接著看這影片的數量），你也可以直接使用使用者評分。
 
-#### Rule 19 - 盡可能使用非常具體的特徵 Use very specific features when you can.
+最後如果你把一個使用者行為作為 label，觀察這行為在不同情境的結果可以作為一個良好的特徵，這些特徵都可以讓你將新的內容帶入這情境中。
+要記得這不是為了個人化：首先找出如果有人在這情境中喜歡這內容，接著找出誰喜歡這個多一點或少一點。
+
+#### Rule 19 - 盡可能使用非常明確的特徵 Use very specific features when you can.
 
 在擁有大量資料的狀況下，使用無數簡單特徵訓練會比使用一點點複雜的特徵訓練更簡單。
 Identifiers of documents being retrieved and canonicalized queries do not provide much
