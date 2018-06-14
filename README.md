@@ -109,58 +109,69 @@ consider pulling these pieces apart, and feeding these inputs into the learning 
 
 ### 監控 (Monitoring)
 
-> 一般來說，使一個警告通知包含可執行的動作及監控報表頁面，是不錯的實踐。
+> 一般來說，使一個警告通知包含可執行的動作及監控報表頁面，是不錯的作法。
 
 #### Rule 8 - 了解你的系統對時效性的需求
 
 如果你有個一天前的模型，會降低多少的效能表現？一周前？一月前呢？這項資訊可以幫助你了解監控的優先度。
 如果這個模型一天不更新就會損失 10% 的營收，那麼讓一個工程師持續監控就是一件合理的事。
 
-大多數的廣告服務系統每天都有新的廣告要處理，因此必須每天更新。舉例來說，如果 Google Play 商店的搜尋功能沒更新，在一個月內就會衝擊到營收。
-某些 Google+ 熱門內容的模型並不包含貼文編號，因此可以偶爾再送出新模型，而某些包含貼文編號的模型就必須更經常的更新。
+大多數的廣告服務系統每天都有新的廣告要處理，因此必須每天更新。
+舉例來說，如果 Google Play 商店的搜尋功能沒更新，在一個月內就會衝擊到營收。
+某些 Google+ 熱門內容的模型並不包含貼文編號，因此可以偶爾再發佈新模型，而某些包含貼文編號的模型就必須更經常的更新。
 
 值得注意的是，時效性會隨著時間改變，特別是當特徵欄位被從模型中加入或移除時。
 
-#### Rule 9 - 在送出模型之前發現問題
+#### Rule 9 - 在發佈模型之前發現問題
 
-許多機器學習系統會有一個送出模型至服務的階段，如果送出的模型有問題，就會是一個影響到使用者的問題 (userfacing issue)。
-但如果發生在送出之前，就只是一個訓練上的問題 (training issue)，而不會影響到使用者。
+許多機器學習系統會有一個發佈模型至服務的階段，如果發佈的模型有問題，就會是一個影響到使用者的問題 (userfacing issue)。
+但如果發生在發佈之前，就只是一個訓練上的問題 (training issue)，而不會影響到使用者。
 
-在部屬模型之前要做合理性確認 (sanity check)，特別是確保在給出的資料之下模型的表現是合理的。如果對於資料抱持懷疑，就不要部屬這個模型。
-許多的團隊在持續部屬模型之前，會檢查 [ROC 曲線](https://zh.wikipedia.org/wiki/ROC%E6%9B%B2%E7%BA%BF) 下方的面積 (或是 [AUC](http://stats.stackexchange.com/questions/132777/what-does-auc-stand-for-and-what-is-it))。
+在部屬模型之前要做合理性確認 (sanity check)，特別是確保在給出的資料之下模型的表現是合理的。
+如果對於資料抱持懷疑，那就不要部屬這個模型。
+許多的團隊在持續部屬模型之前，會檢查 [ROC 曲線](https://zh.wikipedia.org/wiki/ROC%E6%9B%B2%E7%BA%BF) 下方的面積
+(或是 [AUC](http://stats.stackexchange.com/questions/132777/what-does-auc-stand-for-and-what-is-it))。
 
-還沒部屬出去的模型出問題時，只需要電子郵件的警告通知，但是影響到使用者的模型可能需要有監控頁面。因此在接觸使用者之前，最好等到確認完畢為止。
+還沒部屬出去的模型出問題時，只需要電子郵件的警告通知，但是影響到使用者的模型可能需要有監控頁面。
+因此在接觸使用者之前，最好等到確認完畢為止。
 
 #### Rule 10 - 小心沉默的錯誤 (silent failures)
 
 比起其他種類的系統，這是個更常發生於機器學習系統的問題。
 
-例如某個使用到的資料表已經停止更新了，機器學習系統會適應並且有合理的好表現，但是漸漸地崩壞。有時會發現一些資料表的資料已經過期了數個月，比許多其他嘗試，只要簡單的更新資料就能提升更多的效能表現。
+例如某個使用到的資料表已經停止更新了，機器學習系統會適應並且有合理的好表現，但是漸漸地衰退。
+有時會發現一些資料表的資料已經過期了數個月，比許多其他嘗試，只要簡單的更新資料就能提升更多的效能表現。
 
-某個特徵的涵蓋度可能會因實作上的更動而改變，例如某個特徵欄位本來存在於 90% 的樣本中，但突然掉到剩 60% 的樣本中。Play 商店曾經有個過期了六個月的資料表，只更新這個資料表就提升了 2% 的安裝率。如果你追蹤資料的統計數據或是不時的手動查看資料，就可以減少這類型的錯誤。*
+某個特徵的涵蓋度可能會因實作上的更動而改變，例如某個特徵欄位本來存在於 90% 的樣本中，但突然掉到剩 60% 的樣本中。
+Play 商店曾經有個過期了六個月的資料表，只更新這個資料表就提升了 2% 的安裝率。
+如果你追蹤資料的統計數據或是不時的手動查看資料，就可以減少這類型的錯誤。
 
 * <sup> [*A Framework for Analysis of Data Freshness* - Bouzeghoub & Peralta](https://www.fing.edu.uy/inco/grupos/csi/esp/Publicaciones/2004/iqis2004-mb.pdf)</sup>
 
 #### Rule 11 - 把特徵欄位指定一個負責人以及建立文件 Give feature columns owners and documentation.
 
-當系統龐大且有著許多特徵欄位時，需要知道每個欄位由誰建立或維護。當你發現某個了解一個特徵欄位的人要離開時，確保有人能交接資訊。
-縱然許多欄位有明確的名字，但如果有關於這特徵為何、從何而來及預期的效果為何的詳細敘述會更好。
+當系統龐大且有著許多特徵欄位時，需要知道每個欄位由誰建立或維護。
+當你發現某個了解一個特徵欄位的人要離開時，要確保有人能交接資訊。
+縱然許多欄位有明確的名字，但如果知道關於這特徵為何、從何而來及預期的效果為何的詳細敘述會更好。
 
 ### 你的第一個目標 (Objective)
 
-> 對於你在意的系統，有著許多的指標 (metrics) 與測量 (measurements)，但是你的機器學習演算法通常需要一個 **單一的目標，一個你的演算法「嘗試」去最佳化的的數字**。我在此區分指標跟目標的不同：**指標是任何你系統反應出來的數字**，可能重要也可能不重要。可以參閱規則 **#2**
+> 對於你在意的系統，有著許多的指標 (metrics) 與測量 (measurements)，但是你的機器學習演算法通常需要一個 **單一的目標，一個你的演算法「嘗試」去最佳化的的數字**。我在此區分指標跟目標的不同：**指標是任何你系統反應出來的數字**，可能重要也可能不重要。可以參閱法則 **#2**
 
 #### Rule 12 - 不要過度考慮你要最佳化哪個目標
 
-你想要賺錢、讓使用者開心、讓世界變得更美好。有著大量的指標可以去注意，而且你應該去測量所有的指標（見規則 **#2**）。
+你想要賺錢、讓使用者開心、讓世界變得更美好。有著大量的指標可以去注意，而且你應該去測量所有的指標（見法則 **#2**）。
 但是在機器學習過程的早期，你會發現所有都提升了，就算不是你想要最佳化的。
 
 例如你關心著點擊數、在網站上的停留時間以及每日活躍用戶，當你提升點擊數時，你很有可能會發現停留時間也增加了。
-所以當你還能輕易的提升所有指標時，別太過於思考如何平衡各項指標。但也別太過頭：不要用系統的 ultimate health 混淆了你的目標（見規則 #39），以及 **如果你發現你提升了想要最佳化的指標，但決定不要不要發佈，那可能需要重新檢視目標**。
+所以當你還能輕易的提升所有指標時，別太過於思考如何平衡各項指標。
+但也別太過頭：不要用系統的 ultimate health 混淆了你的目標（見法則 #39），以及 **如果你發現你提升了想要最佳化的指標，但決定不要不要發佈，那可能需要重新檢視目標**。
 
 #### Rule 13 - 為你的第一個目標選擇一個簡單、可觀察及可歸因的指標 Choose a simple, observable and attributable metric for your first objective.
 
-常常你以為你知道什麼是真正的目標，直到你盯著你的舊系統與新機器學習系統的比較數據及分析時，你才發現到你想修正一下。進一步來說，團隊成員間經常無法在真正的目標上達成共識。機器學習的目標應該是可以簡單測量的「真正」目標的替代品。
+常常你以為你知道什麼是真正的目標，直到你盯著你的舊系統與新機器學習系統的比較數據及分析時，你才發現到你想修正一下。
+進一步來說，團隊成員間經常無法在真正的目標上達成共識。
+機器學習的目標應該是可以簡單測量的「真正」目標的替代品。
 
 So train on the simple ML objective, and consider having a "policy layer" on top that allows you to add additional logic (hopefully very simple logic) to do the final ranking.
 
@@ -192,12 +203,18 @@ These are all important, but also incredibly hard. Instead, use proxies: if the 
 
 #### Rule 14 - 從一個可解釋（interpretable）的模型讓偵錯更容易 Starting with an interpretable model makes debugging easier.
 
-[線性回歸](https://en.wikipedia.org/wiki/Linear_regression), [邏輯回歸](https://en.wikipedia.org/wiki/Logistic_regression), and [帕松回歸](https://en.wikipedia.org/wiki/Poisson_regression) are directly motivated by a probabilistic model. Each prediction is interpretable as a probability or an expected value. This makes them easier to debug than models that use objectives (zero­one loss, various hinge losses, et cetera) that try to directly optimize classification accuracy or ranking performance. For example, if probabilities in training deviate from probabilities predicted in side­-by-­sides or by
-inspecting the production system, this deviation could reveal a problem.
+[線性回歸](https://en.wikipedia.org/wiki/Linear_regression), [邏輯回歸](https://en.wikipedia.org/wiki/Logistic_regression), and [帕松回歸](https://en.wikipedia.org/wiki/Poisson_regression) are directly motivated by a probabilistic model. 
 
-For example, in linear, logistic, or Poisson regression, **there are subsets of the data where the average predicted expectation equals the average label (1­moment calibrated, or just calibrated)<sup>3</sup>**. If you have a feature which is either 1 or 0 for each example, then the set of examples where that feature is 1 is calibrated. Also, if you have a feature that is 1 for every example, then the set of all examples is calibrated.
+每個預測可以解釋為一個機率或是預期的值，比起使用 zero­ one loss、various hinge losses 之類目標的來直接最佳化分類準確率或排名表現的模型還容易除錯。
+例如當訓練中的機率偏離了預測中的機率或是藉由檢驗線上的系統，這個偏差足以揭露一些問題。
 
-With simple models, it is easier to deal with feedback loops (see Rule **#36&**). Often, we use these probabilistic predictions to make a decision: e.g. rank posts in decreasing expected value (i.e. probability of click/download/etc.). However, remember when it comes time to choose which model to use, the decision matters more than the likelihood of the data given the model (see Rule **#27**).
+舉例來說，在線性回歸、邏輯回歸與帕松回歸中，**there are subsets of the data where the average predicted expectation equals the average label (1­moment calibrated, or just calibrated)<sup>3</sup>**
+如果你有個特徵的值只有 1 跟 0 時，則這個特徵為 1 的樣本集合是 calibrated。
+同樣的如果有個特徵在每個樣本都為 1，則所有樣本的集合是 calibrated。
+
+藉由簡單的模型比較容易處理 feedback loops（見法則 **#36**）。
+我們時常透過機率性預測的方法來做決定，例如排名貼文以預期價值作降冪排序（點擊、下載等機率）。
+然而到了決定要用何種模型時，要記得決策比 the likelihood of the data given the model 還重要（見法則 **#27**）。
 
 #### Rule 15 - Separate Spam Filtering and Quality Ranking in a Policy Layer.
 
@@ -351,17 +368,15 @@ since your system only shows a doc based on its own history with that query, the
 
 The only way to understand how such a system would work long­term is to have it train only on data acquired when the model was live. This is very difficult.
 
-### Training-Serving Skew
+### 訓練-服務偏差 Training-Serving Skew
 
-> Training­-serving skew is a difference between performance during training and performance
-during serving. This skew can be caused by:
-* a discrepancy between how you handle data in the training and serving pipelines, or
-* a change in the data between when you train and when you serve, or
-* a feedback loop between your model and your algorithm.
+> 訓練-服務偏差是指訓練中與服務中效能表現的差距，這偏差可能是因為：
+* 你在訓練與服務流程中處理資料的方式不一致
+* 資料在訓練與送至服務之間發生改變
+* 模型與演算法間有 feedback loop
 
-> We have observed production machine learning systems at Google with training-­serving skew
-that negatively impacts performance. The best solution is to explicitly monitor it so that system
-and data changes don’t introduce skew unnoticed.
+> 我們觀察到了 Google 線上的機器學習系統中，有訓練-服務偏差的會對效能表現造成負面影響。
+最好的解決方案是明確的監控，如此一來系統與資料的變動不會造成不被注意到的偏差。
 
 #### Rule 29 - The best way to make sure that you train like you serve is to save the set of features used at serving time, and then pipe those features to a log to use them at training time.
 
